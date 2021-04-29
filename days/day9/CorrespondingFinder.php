@@ -24,11 +24,26 @@ class CorrespondingFinder
      * @param $indexes is the number of indexes being used to sum together the broken element.
      * @return array of index values taken from the data set whose corresponding values sum to the broken element.
      */
-    public function findWith()
+    public function find()
     {
+        $found = false;
         //for each index, we need to iterate completely through the array of data to get every combination.
         //so try summing every index of the data, move the furthest right (n) index right until it gets to the end
-        $this->iterateThrough([0, 1], 1);
+        $i = 3;
+        while (!$found && $i < count($this->data)-$i) {
+            $indexes = $this->generateIndexes($i);
+            $this->iterateThrough($indexes, count($indexes) - 1);
+            $i++;
+        }
+    }
+
+    private function generateIndexes($size)
+    {
+        $indexes = [];
+        for ($i = 0; $i < $size; $i++) {
+            array_push($indexes, $i);
+        }
+        return $indexes;
     }
 
     private function iterateThrough($indexes, $index)
@@ -47,7 +62,7 @@ class CorrespondingFinder
         if ($index < count($this->data)) {
 
             //if our index is next to another index
-            if ($index + 1 == $this->data[$indexes[$key + 1]]) {
+            if ($indexes[$key + 1] && $index + 1 == $this->data[$indexes[$key + 1]]) {
                 //iterate through for the next index
                 $result = $this->iterateThrough($indexes, $index + 1);
                 if ($result) {
@@ -64,16 +79,16 @@ class CorrespondingFinder
         } //if we are at the end of the data set, and this is not the first piece of data,
         //move the preceding index over one, and reset this index's value back to the value following the previous index's value.
         else if ($key != 0) {
-            $indexes[$key - 1] +=1;
+            $indexes[$key - 1] += 1;
             $indexes[$key] = $indexes[$key - 1] + 1;
             $shifted = $indexes[$key];
-            if($result = $this->iterateThrough($indexes,$shifted)){
+            if ($result = $this->iterateThrough($indexes, $shifted)) {
                 die(print_r($result));
             }
         } else return false;
     }
 }
 
-$arr = [3, 4, 5, 6, 10];
-$cf = new CorrespondingFinder($arr, 11);
-print_r("result: " . $cf->findWith());
+$arr = [3, 4, 5, 6, 10, 23, 122, 512, 212, 2312];
+$cf = new CorrespondingFinder($arr, 337);
+print_r("result: " . $cf->find());
