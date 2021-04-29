@@ -51,25 +51,29 @@ class CorrespondingFinder
                 //iterate through for the next index
                 $result = $this->iterateThrough($indexes, $index + 1);
                 if ($result) {
-                    return $result;
+                    die(print_r($result));
                 }
             } //else we must be able to continue shuffling right
             else {
                 $indexes[$key] = $index + 1;
-                $this->iterateThrough($indexes, $index + 1);
+                $result = $this->iterateThrough($indexes, $index + 1);
+                if ($result) {
+                    die(print_r($result));
+                }
             }
         } //if we are at the end of the data set, and this is not the first piece of data,
         //move the preceding index over one, and reset this index's value back to the value following the previous index's value.
         else if ($key != 0) {
             $indexes[$key - 1] +=1;
-            $indexes[$key] = $indexes[$key - 1] + 2;
-            $this->iterateThrough($indexes,$index-1);
+            $indexes[$key] = $indexes[$key - 1] + 1;
+            $shifted = $indexes[$key];
+            if($result = $this->iterateThrough($indexes,$shifted)){
+                die(print_r($result));
+            }
         } else return false;
     }
-
-
 }
 
-$arr = [3, 5, 6, 7, 10];
+$arr = [3, 4, 5, 6, 10];
 $cf = new CorrespondingFinder($arr, 11);
 print_r("result: " . $cf->findWith());
