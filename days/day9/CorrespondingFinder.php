@@ -60,7 +60,7 @@ class CorrespondingFinder
             }
         } //if we are at the end of the data set, and this is not the first piece of data,
         //move the preceding index over one, and reset this index's value back to the value following the previous index's value.
-        else if ($index != 0) {
+        else if ($key != 0) {
             $indexes[$key - 1] +=1;
             $indexes[$key] = $indexes[$key - 1] + 2;
             $this->iterateThrough($indexes,$index-1);
